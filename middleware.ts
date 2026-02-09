@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 
-const adminOnlyPaths = ['/dashboard', '/management'];
+const adminOnlyPaths = ['/dashboard', '/management', '/admin'];
 const customerOnlyPaths = ['/storefront', '/orders'];
 
 export async function middleware(request: NextRequest) {
@@ -36,5 +36,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/management/:path*', '/storefront/:path*', '/orders/:path*']
+  matcher: ['/dashboard/:path*', '/management/:path*', '/admin/:path*', '/storefront/:path*', '/orders/:path*']
 };
