@@ -9,7 +9,10 @@
     "lint": "next lint",
     "db:generate": "echo \"Add your database client generation command (e.g. prisma generate)\"",
     "db:migrate": "echo \"Add your migration command (e.g. prisma migrate dev)\"",
-    "db:seed": "echo \"Add your seed command\""
+    "db:seed": "echo \"Add your seed command\"",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f postgres"
   },
   "dependencies": {
     "next": "14.2.5",
