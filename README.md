@@ -97,3 +97,38 @@ Open http://localhost:3000.
 - `npm run db:migrate` - Run interactive Prisma dev migrations.
 - `npm run db:migrate:deploy` - Apply committed migrations in CI/production.
 - `npm run db:seed` - Seed demo catalog data for supermarket, clothes, and medicines templates.
+
+## Design system + template variants
+
+This project now includes a reusable storefront design system with three template variants:
+
+- `supermarket`
+- `clothes`
+- `medicines`
+
+### Included building blocks
+
+- Template navbar
+- Hero section
+- Category grid
+- Product cards
+- Promo banner
+- Footer
+
+### Variant switching strategy
+
+- **Route-level config:** pass `?template=supermarket|clothes|medicines` on `/`.
+- **Env fallback:** set `NEXT_PUBLIC_TEMPLATE` in `.env` to choose a default.
+
+### shadcn/ui + Tailwind configuration files
+
+- `components.json`
+- `tailwind.config.ts`
+- `postcss.config.js`
+- `lib/utils.ts`
+
+### Screenshots
+
+- Supermarket variant: `docs/screenshots/supermarket-home.png`
+- Clothes variant: `docs/screenshots/clothes-home.png`
+- Medicines variant: `docs/screenshots/medicines-home.png`
