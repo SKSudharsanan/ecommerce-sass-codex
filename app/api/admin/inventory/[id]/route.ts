@@ -10,9 +10,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   const updated = await prisma.inventoryItem.update({
     where: { id: params.id },
     data: {
-      onHand: Number(body.onHand ?? 0),
-      reserved: Number(body.reserved ?? 0),
-      reorderLevel: Number(body.reorderLevel ?? 0)
+      reorderLevel: Number(body.reorderLevel ?? 0),
+      lowStockThreshold: Number(body.lowStockThreshold ?? 0)
     }
   });
 

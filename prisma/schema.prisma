@@ -33,6 +33,22 @@ enum StockLedgerType {
   ADJUSTMENT
 }
 
+enum StockMovementType {
+  RECEIVE
+  ADJUST
+  RESERVE
+  RELEASE
+}
+
+enum StockReasonCode {
+  PURCHASE_RECEIPT
+  MANUAL_CORRECTION
+  DAMAGE
+  RETURN_TO_STOCK
+  ORDER_PLACED
+  ORDER_CANCELED
+}
+
 enum AddressType {
   HOME
   WORK
@@ -152,12 +168,32 @@ model InventoryItem {
   onHand        Int           @default(0)
   reserved      Int           @default(0)
   reorderLevel  Int           @default(0)
+  lowStockThreshold Int       @default(0)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stockLedgers  StockLedger[]
+  stockMovements StockMovement[]
 
   @@index([onHand])
+}
+
+model StockMovement {
+  id              String            @id @default(cuid())
+  inventoryItemId String
+  orderId         String?
+  type            StockMovementType
+  reasonCode      StockReasonCode
+  quantityDelta   Int
+  note            String?
+  onHandAfter     Int
+  reservedAfter   Int
+  createdAt       DateTime          @default(now())
+  inventoryItem   InventoryItem     @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  order           Order?            @relation(fields: [orderId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([inventoryItemId, createdAt])
+  @@index([orderId])
 }
 
 model StockLedger {
@@ -195,6 +231,7 @@ model Order {
   shippingAddress   Address?        @relation("ShippingAddress", fields: [shippingAddressId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   billingAddress    Address?        @relation("BillingAddress", fields: [billingAddressId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   items             OrderItem[]
+  stockMovements    StockMovement[]
   paymentMetadata   PaymentMetadata?
 
   @@index([userId, createdAt])
