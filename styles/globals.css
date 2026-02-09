@@ -1,5 +1,15 @@
 :root {
   color-scheme: light;
+  --radius: 0.75rem;
+  --bg: #f7f7fb;
+  --text: #111827;
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --gradient-supermarket: linear-gradient(135deg, #16a34a 0%, #22c55e 40%, #bbf7d0 100%);
+  --gradient-clothes: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #ddd6fe 100%);
+  --gradient-medicines: linear-gradient(135deg, #0284c7 0%, #06b6d4 40%, #bae6fd 100%);
+  --gradient-promo: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.08));
 }
 
 * {
@@ -9,14 +19,102 @@
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f7f7fb;
-  color: #111827;
+  background: radial-gradient(circle at top, #fcfdff, var(--bg));
+  color: var(--text);
 }
 
 .container {
-  width: min(960px, 100%);
+  width: min(1120px, 100%);
   margin: 0 auto;
   padding: 1.25rem;
+}
+
+/* theme utilities */
+.bg-gradient-supermarket { background-image: var(--gradient-supermarket); }
+.bg-gradient-clothes { background-image: var(--gradient-clothes); }
+.bg-gradient-medicines { background-image: var(--gradient-medicines); }
+.bg-gradient-promo { background-image: var(--gradient-promo); }
+
+.glass-card {
+  backdrop-filter: blur(10px);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  border-radius: var(--radius);
+  position: relative;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid var(--glass-highlight);
+  pointer-events: none;
+}
+
+.template-page {
+  display: grid;
+  gap: 1rem;
+  padding-bottom: 2rem;
+}
+
+.template-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.template-nav nav {
+  margin-left: auto;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.template-nav a { text-decoration: none; color: inherit; }
+
+.brand-mark {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 999px;
+}
+
+.hero-block {
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.hero-label {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.category-grid,
+.product-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.category-card,
+.product-card,
+.promo-banner {
+  padding: 0.9rem;
+}
+
+.product-card {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.template-footer {
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  color: #4b5563;
 }
 
 .page {
