@@ -1,6 +1,6 @@
 # Ecommerce SaaS Codex
 
-Next.js (App Router) + TypeScript starter scaffold with baseline linting/formatting and environment setup.
+Next.js (App Router) + TypeScript starter scaffold with Prisma/Postgres persistence and Better Auth role-based routing.
 
 ## Prerequisites
 
@@ -13,6 +13,8 @@ Next.js (App Router) + TypeScript starter scaffold with baseline linting/formatt
 ```bash
 cp .env.example .env
 ```
+
+Set `BETTER_AUTH_SECRET` to a long random string before running the app.
 
 The local DB setup uses the `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` values from `.env`.
 

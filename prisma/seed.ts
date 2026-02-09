@@ -1,4 +1,4 @@
-import { PrismaClient, StockLedgerType } from "@prisma/client";
+import { PrismaClient, StockLedgerType, UserRole } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -93,11 +93,23 @@ const demoCatalog: SeedProduct[] = [
 async function main() {
   const user = await prisma.user.upsert({
     where: { email: "demo@shop.local" },
-    update: { name: "Demo Shopper", phone: "+1-555-0100" },
+    update: { name: "Demo Shopper", phone: "+1-555-0100", role: UserRole.CUSTOMER },
     create: {
       email: "demo@shop.local",
       name: "Demo Shopper",
-      phone: "+1-555-0100"
+      phone: "+1-555-0100",
+      role: UserRole.CUSTOMER
+    }
+  });
+
+
+  await prisma.user.upsert({
+    where: { email: "admin@shop.local" },
+    update: { name: "Store Admin", role: UserRole.ADMIN },
+    create: {
+      email: "admin@shop.local",
+      name: "Store Admin",
+      role: UserRole.ADMIN
     }
   });
 
