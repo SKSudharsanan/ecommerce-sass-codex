@@ -17,7 +17,7 @@ type Product = {
   isActive: boolean;
 };
 
-const emptyForm = { name: '', sku: '', template: 'default', category: '', brand: '', description: '', unitPriceCents: 0, isActive: true, onHand: 0, reorderLevel: 0 };
+const emptyForm = { name: '', sku: '', template: 'default', category: '', brand: '', description: '', unitPriceCents: 0, isActive: true, onHand: 0, reorderLevel: 0, lowStockThreshold: 0 };
 
 export function ProductsAdmin() {
   const [items, setItems] = useState<Product[]>([]);
@@ -89,6 +89,9 @@ export function ProductsAdmin() {
           <Input placeholder="Template" value={form.template} onChange={(e) => setForm((v: any) => ({ ...v, template: e.target.value }))} />
           <Input placeholder="Category" value={form.category} onChange={(e) => setForm((v: any) => ({ ...v, category: e.target.value }))} />
           <Input placeholder="Unit price (cents)" type="number" value={form.unitPriceCents} onChange={(e) => setForm((v: any) => ({ ...v, unitPriceCents: Number(e.target.value) }))} />
+          <Input placeholder="Initial stock" type="number" value={form.onHand} onChange={(e) => setForm((v: any) => ({ ...v, onHand: Number(e.target.value) }))} />
+          <Input placeholder="Reorder level" type="number" value={form.reorderLevel} onChange={(e) => setForm((v: any) => ({ ...v, reorderLevel: Number(e.target.value) }))} />
+          <Input placeholder="Low-stock threshold" type="number" value={form.lowStockThreshold} onChange={(e) => setForm((v: any) => ({ ...v, lowStockThreshold: Number(e.target.value) }))} />
           <label><input type="checkbox" checked={form.isActive} onChange={(e) => setForm((v: any) => ({ ...v, isActive: e.target.checked }))} /> Active</label>
           <Button onClick={() => void save()}>Save</Button>
         </div>

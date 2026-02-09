@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       description: body.description ? String(body.description) : null,
       unitPriceCents: Number(body.unitPriceCents ?? 0),
       isActive: Boolean(body.isActive ?? true),
-      inventoryItem: { create: { onHand: Number(body.onHand ?? 0), reorderLevel: Number(body.reorderLevel ?? 0) } }
+      inventoryItem: { create: { onHand: Number(body.onHand ?? 0), reorderLevel: Number(body.reorderLevel ?? 0), lowStockThreshold: Number(body.lowStockThreshold ?? body.reorderLevel ?? 0) } }
     }
   });
 

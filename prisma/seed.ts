@@ -157,12 +157,14 @@ async function main() {
       where: { productId: savedProduct.id },
       update: {
         onHand: product.onHand,
-        reorderLevel: product.reorderLevel
+        reorderLevel: product.reorderLevel,
+        lowStockThreshold: product.reorderLevel
       },
       create: {
         productId: savedProduct.id,
         onHand: product.onHand,
-        reorderLevel: product.reorderLevel
+        reorderLevel: product.reorderLevel,
+        lowStockThreshold: product.reorderLevel
       }
     });
 
