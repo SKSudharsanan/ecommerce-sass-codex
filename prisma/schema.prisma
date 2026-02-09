@@ -9,7 +9,6 @@ datasource db {
 
 enum OrderStatus {
   PENDING
-  CONFIRMED
   PAID
   PACKED
   SHIPPED

@@ -15,7 +15,7 @@ type Product = {
 
 export default function StorefrontPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [qty, setQty] = useState<Record<string, number>>({});
+  const [cart, setCart] = useState<Record<string, number>>({});
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -24,12 +24,30 @@ export default function StorefrontPage() {
       .then((data) => setProducts(data.products));
   }, []);
 
+  useEffect(() => {
+    const savedCart = window.localStorage.getItem('storefront-cart');
+    if (savedCart) setCart(JSON.parse(savedCart));
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('storefront-cart', JSON.stringify(cart));
+  }, [cart]);
+
   const selectedItems = useMemo(
     () =>
       products
-        .map((product) => ({ productId: product.id, quantity: qty[product.id] ?? 0 }))
+        .map((product) => ({ productId: product.id, quantity: cart[product.id] ?? 0 }))
         .filter((item) => item.quantity > 0),
-    [products, qty]
+    [products, cart]
+  );
+
+  const totalCents = useMemo(
+    () =>
+      selectedItems.reduce((sum, item) => {
+        const product = products.find((candidate) => candidate.id === item.productId);
+        return sum + (product?.unitPriceCents ?? 0) * item.quantity;
+      }, 0),
+    [products, selectedItems]
   );
 
   const checkout = async () => {
@@ -39,13 +57,20 @@ export default function StorefrontPage() {
       body: JSON.stringify({ items: selectedItems })
     });
     const data = await response.json();
-    setMessage(response.ok ? `Order ${data.orderNumber} created.` : data.message || 'Checkout failed');
+
+    if (response.ok) {
+      setCart({});
+      setMessage(`Order ${data.orderNumber} created.`);
+      return;
+    }
+
+    setMessage(data.message || 'Checkout failed');
   };
 
   return (
     <main className="container">
       <h1>Storefront</h1>
-      <p>Select quantities and checkout. Orders are blocked when requested quantity exceeds available stock.</p>
+      <p>Build your cart and checkout. Order creation reserves inventory atomically with order persistence.</p>
       <Table>
         <thead><tr><Th>Product</Th><Th>SKU</Th><Th>Price</Th><Th>Available</Th><Th>Qty</Th></tr></thead>
         <tbody>
@@ -62,8 +87,8 @@ export default function StorefrontPage() {
                     type="number"
                     min={0}
                     max={available}
-                    value={qty[product.id] ?? 0}
-                    onChange={(e) => setQty((prev) => ({ ...prev, [product.id]: Number(e.target.value) }))}
+                    value={cart[product.id] ?? 0}
+                    onChange={(e) => setCart((prev) => ({ ...prev, [product.id]: Number(e.target.value) }))}
                   />
                 </Td>
               </tr>
@@ -72,6 +97,8 @@ export default function StorefrontPage() {
         </tbody>
       </Table>
       <div className="toolbar">
+        <span>Cart total: ${(totalCents / 100).toFixed(2)}</span>
+        <Button variant="secondary" onClick={() => setCart({})}>Clear cart</Button>
         <Button onClick={() => void checkout()} disabled={!selectedItems.length}>Checkout</Button>
         {message ? <span>{message}</span> : null}
       </div>
