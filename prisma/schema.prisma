@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PAID
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CARD
+  CASH_ON_DELIVERY
+  WALLET
+  UPI
+  BANK_TRANSFER
+}
+
+enum StockLedgerType {
+  RESTOCK
+  SALE
+  RETURN
+  ADJUSTMENT
+}
+
+enum AddressType {
+  HOME
+  WORK
+  OTHER
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String?
+  phone          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  addresses      Address[]
+  orders         Order[]
+
+  @@index([createdAt])
+}
+
+model Address {
+  id            String      @id @default(cuid())
+  userId        String
+  type          AddressType @default(HOME)
+  line1         String
+  line2         String?
+  city          String
+  state         String
+  postalCode    String
+  country       String      @default("US")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  shippingFor   Order[]     @relation("ShippingAddress")
+  billingFor    Order[]     @relation("BillingAddress")
+
+  @@index([userId])
+  @@index([city, state, country])
+}
+
+model Product {
+  id             String         @id @default(cuid())
+  name           String
+  slug           String         @unique
+  sku            String         @unique
+  description    String?
+  template       String
+  category       String
+  brand          String?
+  unitPriceCents Int
+  currency       String         @default("USD")
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  inventoryItem  InventoryItem?
+  orderItems     OrderItem[]
+
+  @@index([template])
+  @@index([category])
+  @@index([isActive, createdAt])
+}
+
+model InventoryItem {
+  id            String        @id @default(cuid())
+  productId     String        @unique
+  onHand        Int           @default(0)
+  reserved      Int           @default(0)
+  reorderLevel  Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  stockLedgers  StockLedger[]
+
+  @@index([onHand])
+}
+
+model StockLedger {
+  id               String          @id @default(cuid())
+  inventoryItemId  String
+  orderItemId      String?
+  type             StockLedgerType
+  quantityDelta    Int
+  reason           String?
+  createdAt        DateTime        @default(now())
+  inventoryItem    InventoryItem   @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  orderItem        OrderItem?      @relation(fields: [orderItemId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([inventoryItemId, createdAt])
+  @@index([orderItemId])
+}
+
+model Order {
+  id                String          @id @default(cuid())
+  userId            String
+  orderNumber       String          @unique
+  status            OrderStatus     @default(PENDING)
+  subtotalCents     Int
+  shippingCents     Int             @default(0)
+  taxCents          Int             @default(0)
+  discountCents     Int             @default(0)
+  totalCents        Int
+  currency          String          @default("USD")
+  shippingAddressId String?
+  billingAddressId  String?
+  placedAt          DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  shippingAddress   Address?        @relation("ShippingAddress", fields: [shippingAddressId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  billingAddress    Address?        @relation("BillingAddress", fields: [billingAddressId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  items             OrderItem[]
+  paymentMetadata   PaymentMetadata?
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id              String        @id @default(cuid())
+  orderId         String
+  productId       String
+  quantity        Int
+  unitPriceCents  Int
+  totalPriceCents Int
+  createdAt       DateTime      @default(now())
+  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  stockLedgers    StockLedger[]
+
+  @@unique([orderId, productId])
+  @@index([productId])
+}
+
+model PaymentMetadata {
+  id                  String        @id @default(cuid())
+  orderId             String        @unique
+  method              PaymentMethod
+  provider            String?
+  providerPaymentId   String?
+  transactionRef      String?
+  paidAt              DateTime?
+  metadata            Json?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  order               Order         @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([method])
+  @@index([providerPaymentId])
+}

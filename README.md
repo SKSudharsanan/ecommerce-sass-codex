@@ -64,7 +64,17 @@ This starts the `postgres` service defined in `docker-compose.yml`, exposing Pos
 npm install
 ```
 
-## 5) Run the Next.js app
+## 5) Initialize Prisma schema and seed demo data
+
+```bash
+npm run db:generate
+npm run db:migrate
+npm run db:seed
+```
+
+The Prisma schema lives in `prisma/schema.prisma` and initial SQL migration files are tracked in `prisma/migrations`.
+
+## 6) Run the Next.js app
 
 ```bash
 npm run dev
@@ -81,6 +91,7 @@ Open http://localhost:3000.
 - `npm run db:up` - Start local Docker services in detached mode.
 - `npm run db:down` - Stop and remove local Docker services.
 - `npm run db:logs` - Stream PostgreSQL logs.
-- `npm run db:generate` - Placeholder for DB client generation.
-- `npm run db:migrate` - Placeholder for DB migrations.
-- `npm run db:seed` - Placeholder for DB seed script.
+- `npm run db:generate` - Generate the Prisma client.
+- `npm run db:migrate` - Run interactive Prisma dev migrations.
+- `npm run db:migrate:deploy` - Apply committed migrations in CI/production.
+- `npm run db:seed` - Seed demo catalog data for supermarket, clothes, and medicines templates.
