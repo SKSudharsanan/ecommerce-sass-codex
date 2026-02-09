@@ -1,10 +1,8 @@
 export function Hero() {
   return (
-    <main className="container">
-      <h1>Next.js App Router + TypeScript Starter</h1>
-      <p>
-        Your project scaffold is ready with path aliases, ESLint, Prettier, and environment templates.
-      </p>
+    <main className="container page">
+      <h1>Next.js App Router + TypeScript + Better Auth</h1>
+      <p>Login or register to access role-aware storefront and admin routes.</p>
     </main>
   );
 }
