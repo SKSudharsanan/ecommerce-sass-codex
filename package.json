@@ -7,14 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:generate": "echo \"Add your database client generation command (e.g. prisma generate)\"",
-    "db:migrate": "echo \"Add your migration command (e.g. prisma migrate dev)\"",
-    "db:seed": "echo \"Add your seed command\"",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres"
   },
   "dependencies": {
+    "@prisma/client": "^5.18.0",
     "next": "14.2.5",
     "react": "18.3.1",
     "react-dom": "18.3.1"
@@ -26,6 +28,11 @@
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "prettier": "3.3.2",
+    "prisma": "^5.18.0",
+    "tsx": "^4.16.2",
     "typescript": "5.5.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
